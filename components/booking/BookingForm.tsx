@@ -1,81 +1,91 @@
-import React from 'react';
+// components/booking/BookingForm.tsx
 
-const BookingForm = () => (
-  <div className="bg-white p-6 shadow-md rounded-lg">
-    <h2 className="text-xl font-semibold">Contact Detail</h2>
-    <form>
-      {/* Contact Information */}
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label>First Name</label>
-          <input type="text" className="border p-2 w-full mt-2" />
-        </div>
-        <div>
-          <label>Last Name</label>
-          <input type="text" className="border p-2 w-full mt-2" />
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4 mt-4">
-        <div>
-          <label>Email</label>
-          <input type="email" className="border p-2 w-full mt-2" />
-        </div>
-        <div>
-          <label>Phone Number</label>
-          <input type="text" className="border p-2 w-full mt-2" />
-        </div>
-      </div>
+import React, { useState, FormEvent } from 'react';
+import axios from 'axios';
+import Button from '@/components/common/Button';
 
-      {/* Payment Information */}
-      <h2 className="text-xl font-semibold mt-6">Pay with</h2>
-      <div className="mt-4">
-        <label>Card Number</label>
-        <input type="text" className="border p-2 w-full mt-2" />
-      </div>
-      <div className="grid grid-cols-2 gap-4 mt-4">
-        <div>
-          <label>Expiration Date</label>
-          <input type="text" className="border p-2 w-full mt-2" />
-        </div>
-        <div>
-          <label>CVV</label>
-          <input type="text" className="border p-2 w-full mt-2" />
-        </div>
-      </div>
+interface BookingFormProps {
+  propertyId: number;
+  pricePerNight: number;
+}
 
-      {/* Billing Address */}
-      <h2 className="text-xl font-semibold mt-6">Billing Address</h2>
-      <div className="mt-4">
-        <label>Street Address</label>
-        <input type="text" className="border p-2 w-full mt-2" />
-      </div>
-      <div className="grid grid-cols-2 gap-4 mt-4">
-        <div>
-          <label>City</label>
-          <input type="text" className="border p-2 w-full mt-2" />
-        </div>
-        <div>
-          <label>State</label>
-          <input type="text" className="border p-2 w-full mt-2" />
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4 mt-4">
-        <div>
-          <label>Zip Code</label>
-          <input type="text" className="border p-2 w-full mt-2" />
-        </div>
-        <div>
-          <label>Country</label>
-          <input type="text" className="border p-2 w-full mt-2" />
-        </div>
-      </div>
+const BookingForm: React.FC<BookingFormProps> = ({ propertyId, pricePerNight }) => {
+  const [checkInDate, setCheckInDate] = useState('');
+  const [checkOutDate, setCheckOutDate] = useState('');
+  const [guests, setGuests] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
 
-      {/* Submit Button */}
-      <button className="mt-6 bg-green-500 text-white py-2 px-4 rounded-md w-full">
-        Confirm & Pay
-      </button>
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('');
+
+    try {
+      const bookingData = {
+        propertyId,
+        checkInDate,
+        checkOutDate,
+        guests,
+      };
+
+      const response = await axios.post('https://api.example.com/bookings', bookingData);
+      setMessage(`Booking successful! Confirmation ID: ${response.data.bookingId}`);
+      // Clear form after successful submission
+      setCheckInDate('');
+      setCheckOutDate('');
+      setGuests(1);
+    } catch (error) {
+      console.error('Booking error:', error);
+      setMessage('Booking failed. Please check your details and try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <h2 className="text-2xl font-semibold">Book this place</h2>
+      <div>
+        <label htmlFor="check-in" className="block text-sm font-medium text-gray-700">Check-in</label>
+        <input
+          type="date"
+          id="check-in"
+          value={checkInDate}
+          onChange={(e) => setCheckInDate(e.target.value)}
+          required
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+        />
+      </div>
+      <div>
+        <label htmlFor="check-out" className="block text-sm font-medium text-gray-700">Check-out</label>
+        <input
+          type="date"
+          id="check-out"
+          value={checkOutDate}
+          onChange={(e) => setCheckOutDate(e.target.value)}
+          required
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+        />
+      </div>
+      <div>
+        <label htmlFor="guests" className="block text-sm font-medium text-gray-700">Guests</label>
+        <input
+          type="number"
+          id="guests"
+          min="1"
+          value={guests}
+          onChange={(e) => setGuests(parseInt(e.target.value))}
+          required
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+        />
+      </div>
+      <Button type="submit" disabled={loading} className="w-full">
+        {loading ? 'Processing...' : 'Reserve'}
+      </Button>
+      {message && <p className="mt-2 text-sm text-center font-medium">{message}</p>}
     </form>
-  </div>
-);
+  );
+};
 
 export default BookingForm;
