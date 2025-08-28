@@ -1,4 +1,5 @@
 // interfaces/index.ts
+
 export interface PropertyProps {
   id: string;
   image: string;
@@ -9,7 +10,7 @@ export interface PropertyProps {
   sqft: number;
   type: string;
   description: string;
-  category: string[]; // <-- ADDED THIS LINE: Property now has a 'category' array
+  category: string[];
 }
 
 export interface CardProps {
@@ -27,4 +28,14 @@ export interface PillProps {
   label: string;
   onClick: () => void;
   isActive: boolean;
+}
+
+// Updated Booking interface for displaying bookings
+export interface Booking {
+  id: number;
+  propertyName: string;
+  checkInDate: string;
+  checkOutDate: string;
+  guests: number;
+  totalPrice: number;
 }
