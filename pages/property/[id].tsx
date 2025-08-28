@@ -22,11 +22,11 @@ const PropertyDetailsPage = () => {
       if (!id) return;
       try {
         // Fetch property details
-        const propertyResponse = await axios.get(`https://api.example.com/properties/${id}`);
+        const propertyResponse = await axios.get(`/api/properties/${id}`);
         setProperty(propertyResponse.data);
 
         // Fetch reviews
-        const reviewsResponse = await axios.get(`https://api.example.com/properties/${id}/reviews`);
+        const reviewsResponse = await axios.get(`/api/properties/${id}/reviews`);
         setReviews(reviewsResponse.data);
 
       } catch (err) {
@@ -41,15 +41,15 @@ const PropertyDetailsPage = () => {
   }, [id]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <p className="text-center mt-10">Loading...</p>;
   }
 
   if (error) {
-    return <p className="text-red-500">{error}</p>;
+    return <p className="text-center mt-10 text-red-500">{error}</p>;
   }
 
   if (!property) {
-    return <p>Property not found</p>;
+    return <p className="text-center mt-10">Property not found.</p>;
   }
 
   return (
