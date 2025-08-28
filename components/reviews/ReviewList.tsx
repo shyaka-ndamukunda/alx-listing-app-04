@@ -20,7 +20,6 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
               <div className="flex items-center mb-2">
                 <span className="font-bold">{review.author}</span>
                 <span className="ml-2 text-yellow-500">
-                  {/* You can render stars based on the rating here */}
                   {'⭐'.repeat(review.rating)}
                 </span>
                 <span className="text-sm text-gray-400 ml-auto">

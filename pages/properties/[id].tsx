@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Property, Review } from '@/interfaces'; // Import Review
-import PropertyItem from '@/components/properties/PropertyItem';
+import PropertyDetail from '@/components/properties/PropertyDetail';
 import BookingForm from '@/components/booking/BookingForm';
 import ReviewList from '@/components/reviews/ReviewList'; // New component
 
@@ -18,49 +18,45 @@ const PropertyDetailsPage = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (id) {
-      const fetchData = async () => {
-        try {
-          // Fetch property details
-          const propertyResponse = await axios.get(`https://api.example.com/properties/${id}`);
-          setProperty(propertyResponse.data);
+    const fetchData = async () => {
+      if (!id) return;
+      try {
+        // Fetch property details
+        const propertyResponse = await axios.get(`https://api.example.com/properties/${id}`);
+        setProperty(propertyResponse.data);
 
-          // Fetch reviews
-          const reviewsResponse = await axios.get(`https://api.example.com/properties/${id}/reviews`);
-          setReviews(reviewsResponse.data);
+        // Fetch reviews
+        const reviewsResponse = await axios.get(`https://api.example.com/properties/${id}/reviews`);
+        setReviews(reviewsResponse.data);
 
-        } catch (err) {
-          console.error("Error fetching data:", err);
-          setError("Failed to fetch details. Please try again.");
-        } finally {
-          setLoading(false);
-        }
-      };
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError("Failed to fetch details. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      fetchData();
-    }
+    fetchData();
   }, [id]);
 
   if (loading) {
-    return <div className="text-center mt-10">Loading...</div>;
+    return <p>Loading...</p>;
   }
 
   if (error) {
-    return <div className="text-center mt-10 text-red-500">{error}</div>;
+    return <p className="text-red-500">{error}</p>;
   }
 
   if (!property) {
-    return <div className="text-center mt-10">Property not found.</div>;
+    return <p>Property not found</p>;
   }
 
   return (
-    <PropertyItem property={property}>
-      {/* Pass the booking form as a child */}
+    <PropertyDetail property={property}>
       <BookingForm propertyId={property.id} pricePerNight={property.price} />
-      
-      {/* Pass the reviews as a child */}
       <ReviewList reviews={reviews} />
-    </PropertyItem>
+    </PropertyDetail>
   );
 };
 
